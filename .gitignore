@@ -1,0 +1,17 @@
+# Environment variables
+env.go
+
+# Build
+go-backend
+
+# Static folder
+/.static
+*.png
+*.jpg
+/data
+
+# IDE
+/.vscode
+
+# Systemd
+constructor.service
