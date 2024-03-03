@@ -47,7 +47,7 @@ func SetRefreshToken(id int, userAccess string, w http.ResponseWriter) error {
 	cookie := &http.Cookie{
 		Name:   "refresh-token",
 		Value:  "Bearer " + refreshToken,
-		Path:   "/auth/refresh",
+		Path:   "/api/auth/refresh",
 		MaxAge: 0,
 	}
 	http.SetCookie(w, cookie)
