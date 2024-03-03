@@ -95,6 +95,28 @@ func (c logIn) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if fingerprint := r.Header.Get("Fingerprint"); len(fingerprint) != 0 {
+
+		query := `
+			INSERT INTO sessions ("userId", "fingerprint", "userAgent", "ip", "updatedAt") 
+			VALUES (@userId, @fingerprint, @userAgent, @ip, CURRENT_TIMESTAMP)
+			ON CONFLICT ("fingerprint") DO 
+				UPDATE SET ("userId", "userAgent", "ip", "updatedAt") = 
+				(EXCLUDED."userId", EXCLUDED."userAgent", EXCLUDED."ip", EXCLUDED."updatedAt");
+		`
+		args := pgx.NamedArgs{
+			"userId":      userData.ID,
+			"fingerprint": fingerprint,
+			"userAgent":   r.Header.Get("User-Agent"),
+			"ip":          strings.Split(r.RemoteAddr, ":")[0],
+		}
+
+		if _, err := c.db.Query(&query, args); err != nil {
+			exception.InternalServerError(w, err)
+			return
+		}
+	}
+
 	// OK response
 	json.NewEncoder(w).Encode(&result)
 }

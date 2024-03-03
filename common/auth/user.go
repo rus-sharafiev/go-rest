@@ -16,6 +16,7 @@ func (c getAuthUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		exception.MethodNotAllowed(w)
 		return
 	}
+
 	userId, _ := Headers(r)
 	if len(userId) == 0 {
 		exception.Unauthorized(w)

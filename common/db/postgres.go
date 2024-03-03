@@ -26,7 +26,7 @@ var (
 
 func NewConnection() *Postgres {
 	connectOnce.Do(func() {
-		pool, err := pgxpool.New(context.Background(), "postgres:///go-rest") // postgres://rus:8987@10.10.10.100:5432/go-rest
+		pool, err := pgxpool.New(context.Background(), "postgres:///go-rest")
 		if err != nil {
 			log.Fatalf("unable to create database connection: %s", err.Error())
 		}

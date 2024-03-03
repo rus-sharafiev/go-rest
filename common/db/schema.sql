@@ -14,3 +14,10 @@ CREATE TABLE passwords (
     "userId" integer REFERENCES users (id) ON DELETE CASCADE,
     "passwordHash" text
 );
+CREATE TABLE sessions (
+    "userId" integer REFERENCES users (id) ON DELETE CASCADE,
+    "fingerprint" text UNIQUE,
+    "userAgent" text,
+    "ip" text,
+    "updatedAt" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
