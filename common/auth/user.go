@@ -7,11 +7,11 @@ import (
 	"github.com/rus-sharafiev/go-rest/common/exception"
 )
 
-type user struct {
+type getAuthUser struct {
 	db *db.Postgres
 }
 
-func (c user) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c getAuthUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		exception.MethodNotAllowed(w)
 		return
@@ -33,4 +33,4 @@ func (c user) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.db.WriteJsonString(w, &query, userId)
 }
 
-var User = &user{db: db.NewConnection()}
+var GetAuthUser = &getAuthUser{db: db.NewConnection()}
