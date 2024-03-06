@@ -17,7 +17,7 @@ type Postgres struct {
 	pool *pgxpool.Pool
 }
 
-// -- Crete instance --------------------------------------------------------------
+// -- Create instance -------------------------------------------------------------
 
 var (
 	connectOnce sync.Once
@@ -28,9 +28,9 @@ func NewConnection() *Postgres {
 	connectOnce.Do(func() {
 		pool, err := pgxpool.New(context.Background(), "postgres:///go-rest")
 		if err != nil {
-			log.Fatalf("unable to create database connection: %s", err.Error())
+			log.Fatalf("\x1b[2mPostgreSQL:\x1b[0m\x1b[31m unable to create database connection: %s \x1b[0m\n\n", err.Error())
 		}
-		fmt.Println("connection to the database has been established")
+		fmt.Println("\x1b[2mPostgreSQL:\x1b[0m\x1b[32m connection to the database has been established\x1b[0m")
 		instance = &Postgres{pool}
 	})
 	return instance
