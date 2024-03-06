@@ -2,17 +2,18 @@ package mail
 
 import (
 	"net/smtp"
-	"os"
 	"strconv"
+
+	"github.com/rus-sharafiev/go-rest/common"
 )
 
 func SendCode(recipient string, code int) error {
-	login := os.Getenv("MAIL_LOGIN")
-	password := os.Getenv("MAIL_PASSWORD")
-	host := os.Getenv("MAIL_HOST")
+	login := *common.Config.MailLogin
+	password := *common.Config.MailPassword
+	host := *common.Config.MailHost
 	auth := smtp.PlainAuth("", login, password, host)
 
-	from := os.Getenv("MAIL_LOGIN")
+	from := *common.Config.MailLogin
 	to := []string{recipient}
 	msg := []byte("To: " + recipient + "\r\n" +
 		"Subject: Registration confirmation code\r\n" +
@@ -27,12 +28,12 @@ func SendCode(recipient string, code int) error {
 }
 
 func SendPasswordResetLink(recipient string, link string) error {
-	login := os.Getenv("MAIL_LOGIN")
-	password := os.Getenv("MAIL_PASSWORD")
-	host := os.Getenv("MAIL_HOST")
+	login := *common.Config.MailLogin
+	password := *common.Config.MailPassword
+	host := *common.Config.MailHost
 	auth := smtp.PlainAuth("", login, password, host)
 
-	from := os.Getenv("MAIL_LOGIN")
+	from := *common.Config.MailLogin
 	to := []string{recipient}
 	subject := "Subject: Update password\n"
 	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"

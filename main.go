@@ -1,14 +1,14 @@
 package main
 
 import (
-	"flag"
+	_ "embed"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/rs/cors"
+	"github.com/rus-sharafiev/go-rest/common"
 	"github.com/rus-sharafiev/go-rest/common/auth"
 	"github.com/rus-sharafiev/go-rest/common/formdata"
 	"github.com/rus-sharafiev/go-rest/common/spa"
@@ -17,49 +17,36 @@ import (
 	"github.com/rus-sharafiev/go-rest/user"
 )
 
-var (
-	staticDir  = ".static"
-	uploadPath = "/upload/"
-	uploadDir  = filepath.Join(staticDir, "upload")
-)
+//go:embed config.json
+var config []byte
 
 func main() {
-	loadEnv()
-
-	port := flag.String("port", "", "PORT to run http handler")
-	flag.Parse()
-
-	if len(*port) == 0 {
-		fmt.Println("provide port number")
-		flag.Usage()
-		os.Exit(0)
+	// Load app config
+	if err := json.Unmarshal(config, &common.Config); err != nil {
+		log.Fatalf("\n\x1b[31m Error parsing the config file: %v\x1b[0m\n", err)
+	} else if common.Config.IsNotValid() {
+		log.Fatalf("\x1b[31mThe config file is missing required fields \x1b[0m\n\n")
 	}
 
-	router := http.NewServeMux()
+	// Create HTTP request multiplexer
+	mux := http.NewServeMux()
 
-	// API
-	router.Handle("/api/auth/", auth.Controller)
-	router.Handle("/api/users/", user.Controller)
+	// API ----------------------------------------------------------------------------
 
-	// Handle and serve images
-	router.Handle("/images/", &images.Controller{
-		UploadDir: filepath.Join(staticDir, "images"),
-	})
+	mux.Handle("/api/auth/", auth.Controller)
+	mux.Handle("/api/users/", user.Controller)
 
-	// Serve uploads made by form data interceptor
-	router.Handle(uploadPath, &uploads.Server{
-		Dir: &staticDir,
-	})
+	// --------------------------------------------------------------------------------
 
-	// Serve static files and SPA
-	router.Handle("/", &spa.Handler{
-		Static: &staticDir,
-	})
+	// Specific pathes
+	mux.Handle("/images/", images.Controller)
 
-	handler := formdata.Interceptor{
-		UploadDir:  &uploadDir,
-		UploadPath: &uploadPath,
-	}.Handler(router)
+	// Static files
+	mux.Handle(*common.Config.UploadPath, uploads.Handler)
+	mux.Handle("/", spa.Handler)
+
+	// Middleware
+	handler := formdata.Interceptor(mux)
 	handler = auth.Guard(handler)
 	handler = cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://192.168.190.9:5555", "http://192.168.190.9:8000", "http://localhost:8000"},
@@ -67,6 +54,6 @@ func main() {
 		AllowCredentials: true,
 	}).Handler(handler)
 
-	fmt.Println("server is running on port " + *port)
-	log.Fatal(http.ListenAndServe(":"+*port, handler))
+	fmt.Printf("\n\x1b[32mServer is running on port %v\x1b[0m\n\n", *common.Config.Port)
+	log.Fatal(http.ListenAndServe(":"+*common.Config.Port, handler))
 }

@@ -1,5 +1,6 @@
 # Environment variables
 env.go
+config.json
 
 # Build
 go-backend

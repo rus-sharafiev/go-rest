@@ -2,10 +2,10 @@ package jwt
 
 import (
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/rus-sharafiev/go-rest/common"
 )
 
 type Claims struct {
@@ -25,7 +25,7 @@ func GenerateAccessToken(id int, userAccess string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(os.Getenv("JWT_KEY")))
+	return token.SignedString([]byte(*common.Config.JwtKey))
 }
 
 func SetRefreshToken(id int, userAccess string, w http.ResponseWriter) error {
@@ -39,7 +39,7 @@ func SetRefreshToken(id int, userAccess string, w http.ResponseWriter) error {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	refreshToken, err := token.SignedString([]byte(os.Getenv("JWT_KEY")))
+	refreshToken, err := token.SignedString([]byte(*common.Config.JwtKey))
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func SetRefreshToken(id int, userAccess string, w http.ResponseWriter) error {
 
 func Validate(tokenString string) (*Claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(os.Getenv("JWT_KEY")), nil
+		return []byte(*common.Config.JwtKey), nil
 	})
 
 	if err != nil {

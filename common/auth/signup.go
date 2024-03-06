@@ -9,13 +9,13 @@ import (
 	"math/rand"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/redis/go-redis/v9"
+	"github.com/rus-sharafiev/go-rest/common"
 	"github.com/rus-sharafiev/go-rest/common/db"
 	"github.com/rus-sharafiev/go-rest/common/exception"
 	"github.com/rus-sharafiev/go-rest/common/jwt"
@@ -52,7 +52,7 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		} else {
 			resp, err := http.PostForm("https://www.google.com/recaptcha/api/siteverify", url.Values{
-				"secret":   {os.Getenv("reCAPTCHA_SECRET")},
+				"secret":   {*common.Config.RecaptchaSecret},
 				"response": {*captcha},
 			})
 			if err != nil {

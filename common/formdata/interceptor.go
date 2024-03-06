@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/google/uuid"
+	"github.com/rus-sharafiev/go-rest/common"
 	"github.com/rus-sharafiev/go-rest/common/auth"
 	"github.com/rus-sharafiev/go-rest/common/exception"
 )
@@ -29,22 +30,14 @@ type uploadError struct {
 // Form Data interceptor for custom JSON to Form Data converter.
 // The source code of the converter can be found at
 // https://github.com/rus-sharafiev/fetch-api/blob/master/src/fetch-api.ts#L180
-type Interceptor struct {
-	UploadDir  *string
-	UploadPath *string
-	Whitelist  *[]string
-	Blacklist  *[]string
-}
-
-// Middleware handler
-func (i Interceptor) Handler(next http.Handler) http.Handler {
+func Interceptor(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		// Check for whitelist and blacklist
-		if wl := i.Whitelist; wl != nil && !i.inList(*wl, r) {
+		if wl := common.Config.FormdataWhitelist; wl != nil && !inList(*wl, r) {
 			next.ServeHTTP(w, r)
 			return
-		} else if bl := i.Blacklist; wl == nil && bl != nil && i.inList(*bl, r) {
+		} else if bl := common.Config.FormdataBlacklist; wl == nil && bl != nil && inList(*bl, r) {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -62,7 +55,7 @@ func (i Interceptor) Handler(next http.Handler) http.Handler {
 			}
 
 			// Check if subdirectory exists
-			fullPath := path.Join(*i.UploadDir, userDir)
+			fullPath := path.Join(*common.Config.UploadDir, userDir)
 			if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 				if err := os.Mkdir(fullPath, 0755); err != nil {
 					exception.InternalServerError(w, err)
@@ -120,7 +113,7 @@ func (i Interceptor) Handler(next http.Handler) http.Handler {
 							return
 						}
 
-						resultChan <- []string{name, strings.Replace(fileName, fullPath, *i.UploadPath, 1)}
+						resultChan <- []string{name, strings.Replace(fileName, fullPath, *common.Config.UploadDir, 1)}
 					}()
 				}
 
@@ -204,7 +197,7 @@ func (i Interceptor) Handler(next http.Handler) http.Handler {
 }
 
 // Check if one of the list strings matches the request URL path
-func (i Interceptor) inList(list []string, r *http.Request) bool {
+func inList(list []string, r *http.Request) bool {
 	path := strings.Split(strings.Trim(r.URL.Path, "/"), "/")
 	return slices.ContainsFunc(list, func(s string) bool {
 		return slices.Contains(path, s)
