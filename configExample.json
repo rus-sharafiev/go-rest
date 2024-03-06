@@ -1,0 +1,16 @@
+{
+    "port": "1234",
+    
+	"staticDir": "static",
+	"uploadDir": "upload",
+	"uploadPath": "/upload/",
+
+	"formdataWhitelist": [],
+	"formdataBlacklist": [],
+
+    "jwtKey": "jwtSecret",
+    "recaptchaSecret": "recaptchaSecret",
+    "mailLogin": "mailServerLogin",
+    "mailPassword": "strongPassword",
+    "mailHost": "smtp.mail.com"
+}
