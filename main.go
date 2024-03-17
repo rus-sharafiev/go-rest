@@ -51,6 +51,7 @@ func main() {
 	handler = cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://192.168.190.9:5555", "http://192.168.190.9:8000", "http://localhost:8000"},
 		AllowedHeaders:   []string{"Content-Type", "Fingerprint", "Authorization"},
+		AllowedMethods:   []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete, http.MethodOptions},
 		AllowCredentials: true,
 	}).Handler(handler)
 
