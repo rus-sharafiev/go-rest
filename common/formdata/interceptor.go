@@ -113,7 +113,7 @@ func Interceptor(next http.Handler) http.Handler {
 							return
 						}
 
-						resultChan <- []string{name, strings.Replace(fileName, fullPath, *common.Config.UploadDir, 1)}
+						resultChan <- []string{name, "/" + strings.Replace(fileName, fullPath, *common.Config.UploadDir, 1)}
 					}()
 				}
 
