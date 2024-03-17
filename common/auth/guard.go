@@ -11,6 +11,11 @@ import (
 func Guard(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
+		// Delete user headers if exist
+		r.Header.Del("userID")
+		r.Header.Del("userAccess")
+
+		// Add user headers
 		if auth := r.Header.Get("Authorization"); len(auth) != 0 {
 			token := strings.Split(auth, " ")[1]
 
@@ -18,14 +23,14 @@ func Guard(next http.Handler) http.Handler {
 			if err == nil {
 				r.Header.Add("userID", strconv.Itoa(claims.UserId))
 				r.Header.Add("userAccess", claims.UserAccess)
-			} else {
-				r.Header.Del("userID")
-				r.Header.Del("userAccess")
 			}
-
 		}
 
-		w.Header().Add("Content-Type", "application/json")
+		// Add Content-Type header for API paths
+		if strings.Contains(r.URL.Path, "/api/") {
+			w.Header().Add("Content-Type", "application/json")
+		}
+
 		next.ServeHTTP(w, r)
 	})
 }
