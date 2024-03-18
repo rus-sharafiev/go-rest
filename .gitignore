@@ -4,6 +4,7 @@ config.json
 
 # Build
 go-backend
+go-rest
 
 # Static folder
 /static

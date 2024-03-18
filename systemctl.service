@@ -1,0 +1,18 @@
+[Unit]
+Description=API
+After=syslog.target
+After=network.target
+After=nginx.service
+After=postgresql.service
+Requires=postgresql.service
+Wants=redis.service
+
+[Service]
+ExecStart=DB=db /var/www/html/server
+Restart=always
+RestartSec=10
+StandardOutput=syslog
+StandardError=syslog
+
+[Install]
+WantedBy=multi-user.target
