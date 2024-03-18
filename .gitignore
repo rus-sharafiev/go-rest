@@ -6,7 +6,8 @@ config.json
 go-backend
 
 # Static folder
-/.static
+/static
+/uploads
 *.png
 *.jpg
 /data
