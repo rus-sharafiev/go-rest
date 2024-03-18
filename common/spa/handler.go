@@ -34,6 +34,26 @@ func (h handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Serve gziped
+	if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+
+		if fileType := filepath.Ext(path); fileType == ".js" || fileType == ".css" {
+			if _, err := os.Stat(path + ".gz"); err == nil {
+
+				w.Header().Add("Content-Encoding", "gzip")
+				if fileType == ".js" {
+					w.Header().Add("Content-Type", "application/javascript")
+				}
+				if fileType == ".css" {
+					w.Header().Add("Content-Type", "text/css")
+				}
+				http.ServeFile(w, r, filepath.Join(path+".gz"))
+
+				return
+			}
+		}
+	}
+
 	w.Header().Add("Cache-Control", "no-cache")
 	http.FileServer(http.Dir(*common.Config.StaticDir)).ServeHTTP(w, r)
 }
