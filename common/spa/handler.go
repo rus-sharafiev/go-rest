@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/rus-sharafiev/go-rest/common"
 	"github.com/rus-sharafiev/go-rest/common/exception"
