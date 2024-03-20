@@ -51,4 +51,4 @@ func (c refresh) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&result)
 }
 
-var Refresh = &refresh{db: db.NewConnection()}
+var Refresh = &refresh{db: &db.Instance}

@@ -34,4 +34,4 @@ func (c getAuthUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	c.db.WriteJsonString(w, &query, userId)
 }
 
-var GetAuthUser = &getAuthUser{db: db.NewConnection()}
+var GetAuthUser = &getAuthUser{db: &db.Instance}

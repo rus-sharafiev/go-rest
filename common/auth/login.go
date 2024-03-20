@@ -121,4 +121,4 @@ func (c logIn) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&result)
 }
 
-var LogIn = &logIn{db: db.NewConnection()}
+var LogIn = &logIn{db: &db.Instance}

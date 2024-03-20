@@ -109,7 +109,7 @@ func (c resetPassword) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&successMessage)
 }
 
-var ResetPassword = &resetPassword{db: db.NewConnection()}
+var ResetPassword = &resetPassword{db: &db.Instance}
 
 // -- Update ----------------------------------------------------------------------
 type updatePassword struct {
@@ -199,4 +199,4 @@ func (c updatePassword) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&successMessage)
 }
 
-var UpdatePassword = &updatePassword{db: db.NewConnection()}
+var UpdatePassword = &updatePassword{db: &db.Instance}

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"sync"
 
 	"github.com/jackc/pgx/v5"
@@ -22,25 +21,20 @@ type Postgres struct {
 
 var (
 	connectOnce sync.Once
-	instance    *Postgres
+	Instance    Postgres
 )
 
-func NewConnection() *Postgres {
+func Connect(dbName string) {
 	connectOnce.Do(func() {
-		dbName, ok := os.LookupEnv("DB")
-		if !ok {
-			log.Fatalf("\x1b[2mPostgreSQL:\x1b[0m\x1b[31m the environment variable with a database name is missing\x1b[0m")
-		}
 
 		pool, err := pgxpool.New(context.Background(), "postgres:///"+dbName)
 		if err != nil {
 			log.Fatalf("\x1b[2mPostgreSQL:\x1b[0m\x1b[31m unable to create database connection: %s \x1b[0m\n\n", err.Error())
 		}
 
-		fmt.Println("\x1b[2mPostgreSQL:\x1b[0m\x1b[32m connection to the database has been established\x1b[0m")
-		instance = &Postgres{pool}
+		fmt.Println("\x1b[32mСonnection to the database has been established\x1b[0m")
+		Instance = Postgres{pool}
 	})
-	return instance
 }
 
 // -- Methods ---------------------------------------------------------------------

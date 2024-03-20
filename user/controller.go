@@ -44,4 +44,4 @@ func (c controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-var Controller = &controller{db: db.NewConnection()}
+var Controller = &controller{db: &db.Instance}

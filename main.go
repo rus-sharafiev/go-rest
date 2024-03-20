@@ -10,10 +10,10 @@ import (
 	"github.com/rs/cors"
 	"github.com/rus-sharafiev/go-rest/common"
 	"github.com/rus-sharafiev/go-rest/common/auth"
+	"github.com/rus-sharafiev/go-rest/common/db"
 	"github.com/rus-sharafiev/go-rest/common/formdata"
 	"github.com/rus-sharafiev/go-rest/common/spa"
 	"github.com/rus-sharafiev/go-rest/common/uploads"
-	"github.com/rus-sharafiev/go-rest/images"
 	"github.com/rus-sharafiev/go-rest/user"
 )
 
@@ -28,7 +28,8 @@ func main() {
 		log.Fatalf("\x1b[31mThe config file is missing required fields \x1b[0m\n\n")
 	}
 
-	// Create HTTP request multiplexer
+	// Connect to the database and create HTTP request multiplexer
+	db.Connect(*common.Config.Db)
 	mux := http.NewServeMux()
 
 	// API ----------------------------------------------------------------------------
@@ -39,7 +40,7 @@ func main() {
 	// --------------------------------------------------------------------------------
 
 	// Specific pathes
-	mux.Handle("/images/", images.Controller)
+	// mux.Handle("/images/", images.Controller)
 
 	// Static files
 	mux.Handle(*common.Config.UploadPath, uploads.Handler)

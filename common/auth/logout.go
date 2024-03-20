@@ -55,4 +55,4 @@ func (c logOut) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&successMessage)
 }
 
-var LogOut = &logOut{db: db.NewConnection()}
+var LogOut = &logOut{db: &db.Instance}
