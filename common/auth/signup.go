@@ -2,11 +2,12 @@ package auth
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"math/rand"
+	"math/big"
 	"net/http"
 	"net/url"
 	"strings"
@@ -67,8 +68,6 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 
-			fmt.Println(recaptchaResponse)
-
 			if !recaptchaResponse.Success {
 				exception.BadRequestFields(w, map[string]string{
 					"grecaptcha": localization.SelectString(r, localization.Langs{
@@ -78,7 +77,6 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				})
 				return
 			}
-
 		}
 	}
 
@@ -90,17 +88,19 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				Ru: "Email уже существует",
 			}),
 		})
+
 		return
 	}
 
-	code := rand.Intn(899999) + 100000
-	if err := mail.SendCode(signUpDto.Email, code); err != nil {
-		exception.InternalServerError(w, fmt.Errorf("mail server error: %v", err))
-	}
-
-	id, err := uuid.NewRandom()
+	randInt, err := rand.Int(rand.Reader, big.NewInt(899999))
 	if err != nil {
 		exception.InternalServerError(w, err)
+		return
+	}
+	code := int(randInt.Int64() + 100000)
+
+	if err := mail.SendCode(signUpDto.Email, code); err != nil {
+		exception.InternalServerError(w, fmt.Errorf("mail server error: %v", err))
 		return
 	}
 
@@ -117,6 +117,12 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Write user data to Redis
+	id, err := uuid.NewRandom()
+	if err != nil {
+		exception.InternalServerError(w, err)
+		return
+	}
+
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
 		Password: "",
@@ -124,7 +130,6 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err := rdb.SetNX(context.Background(), id.String(), string(signUpDataJson), 2*time.Minute).Err(); err != nil {
-		fmt.Println(err)
 		exception.InternalServerError(w, err)
 		return
 	}
@@ -150,7 +155,7 @@ func (c signUp) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&successMessage)
 }
 
-var SignUp = &signUp{db: db.NewConnection()}
+var SignUp = &signUp{db: &db.Instance}
 
 // -- Verify Signup ---------------------------------------------------------------
 type verifySignup struct {
@@ -263,4 +268,4 @@ func (c verifySignup) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&result)
 }
 
-var VerifySignup = &verifySignup{db: db.NewConnection()}
+var VerifySignup = &verifySignup{db: &db.Instance}
