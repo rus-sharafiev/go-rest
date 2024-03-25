@@ -3,15 +3,15 @@ package user
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io/fs"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/rus-sharafiev/go-rest/common/auth"
-	"github.com/rus-sharafiev/go-rest/common/exception"
+	common "github.com/rus-sharafiev/go-rest-common"
+	"github.com/rus-sharafiev/go-rest-common/exception"
+	"github.com/rus-sharafiev/go-rest/auth"
 )
 
 // -- CREATE ----------------------------------------------------------------------
@@ -91,7 +91,7 @@ func (c *controller) findOne(id string, w http.ResponseWriter, r *http.Request) 
 // -- UPDATE ----------------------------------------------------------------------
 
 func (c *controller) update(id string, w http.ResponseWriter, r *http.Request) {
-	if userId, role := auth.Headers(r); role != "ADMIN" || userId != id {
+	if userId, role := auth.Headers(r); userId != id && role != "ADMIN" {
 		if len(userId) == 0 {
 			exception.Unauthorized(w)
 			return
@@ -104,13 +104,15 @@ func (c *controller) update(id string, w http.ResponseWriter, r *http.Request) {
 	var payload UpdateDto
 	json.NewDecoder(r.Body).Decode(&payload)
 
+	// Remove old avatar image file
 	var currentAvatar sql.NullString
 	avatarQuery := "SELECT avatar FROM users WHERE id = $1;"
 	c.db.QueryRow(&avatarQuery, id).Scan(&currentAvatar)
 
-	if currentAvatar.Valid && currentAvatar.String != *payload.Avatar {
-		if err := os.Remove(currentAvatar.String); err != nil {
-			if !errors.Is(err, fs.ErrNotExist) {
+	if currentAvatar.Valid && payload.Avatar != nil && currentAvatar.String != *payload.Avatar {
+		avatarPath := filepath.Join(*common.Config.UploadDir, id, filepath.Base(currentAvatar.String))
+		if err := os.Remove(avatarPath); err != nil {
+			if os.IsNotExist(err) {
 				fmt.Println(err)
 			}
 		}
