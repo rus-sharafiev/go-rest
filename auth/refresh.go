@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/rus-sharafiev/go-rest/common/db"
-	"github.com/rus-sharafiev/go-rest/common/exception"
-	"github.com/rus-sharafiev/go-rest/common/jwt"
+	"github.com/rus-sharafiev/go-rest-common/db"
+	"github.com/rus-sharafiev/go-rest-common/exception"
+	"github.com/rus-sharafiev/go-rest-common/jwt"
 )
 
 type refresh struct {

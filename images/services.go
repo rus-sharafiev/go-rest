@@ -15,30 +15,31 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rus-sharafiev/go-rest/common/auth"
-	"github.com/rus-sharafiev/go-rest/common/exception"
+	common "github.com/rus-sharafiev/go-rest-common"
+	"github.com/rus-sharafiev/go-rest-common/exception"
+	"github.com/rus-sharafiev/go-rest/auth"
 	"golang.org/x/image/draw"
 )
 
 // SERVE UPLOAD -------------------------------------------------------------------
-func (c *Controller) serve(w http.ResponseWriter, r *http.Request) {
-	userId, role := auth.Headers(r)
+func (c controller) serve(w http.ResponseWriter, r *http.Request) {
+	userId, _ := auth.Headers(r)
 	if len(userId) == 0 {
 		exception.Unauthorized(w)
 		return
 	}
 
-	uploadDir := filepath.Join(c.UploadDir, userId)
-	if role == "ADMIN" {
-		uploadDir = c.UploadDir
-	}
+	uploadDir := filepath.Join(*common.Config.UploadDir, userId)
+	// if role == "ADMIN" {
+	// 	uploadDir = c.UploadDir
+	// }
 
 	w.Header().Add("Cache-Control", "private, max-age=31536000, immutable")
 	http.StripPrefix("/images/", http.FileServer(http.Dir(uploadDir))).ServeHTTP(w, r)
 }
 
 // HANDLE UPLOAD ------------------------------------------------------------------
-func (c *Controller) handle(w http.ResponseWriter, r *http.Request) {
+func (c controller) handle(w http.ResponseWriter, r *http.Request) {
 	const basePath = "/images"
 
 	// Check whether request contains multipart/form-data
@@ -53,7 +54,7 @@ func (c *Controller) handle(w http.ResponseWriter, r *http.Request) {
 		// Check existence or create folders
 		sizes := [5]string{Original, Small, Medium, Large, ExtraLarge}
 		for _, size := range sizes {
-			fullPath := path.Join(c.UploadDir, subFolder, size)
+			fullPath := path.Join(*common.Config.UploadDir, subFolder, size)
 
 			if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 				if err := os.Mkdir(fullPath, 0755); err != nil {
@@ -127,7 +128,7 @@ func (c *Controller) handle(w http.ResponseWriter, r *http.Request) {
 						go func() {
 
 							// Create output file
-							outputLocation := path.Join(path.Join(c.UploadDir, subFolder, size), fileName)
+							outputLocation := path.Join(path.Join(*common.Config.UploadDir, subFolder, size), fileName)
 							outFile, err := os.Create(outputLocation)
 							if err != nil {
 								errorSizesChan <- err
@@ -180,7 +181,7 @@ func (c *Controller) handle(w http.ResponseWriter, r *http.Request) {
 									}
 								}
 							}
-							imageSizesChan <- []string{size, strings.Replace(outputLocation, c.UploadDir, basePath, 1)}
+							imageSizesChan <- []string{size, strings.Replace(outputLocation, *common.Config.UploadDir, basePath, 1)}
 						}()
 					}
 

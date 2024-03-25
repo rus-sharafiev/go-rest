@@ -3,8 +3,8 @@ package auth
 import (
 	"net/http"
 
-	"github.com/rus-sharafiev/go-rest/common/db"
-	"github.com/rus-sharafiev/go-rest/common/exception"
+	"github.com/rus-sharafiev/go-rest-common/db"
+	"github.com/rus-sharafiev/go-rest-common/exception"
 )
 
 type getAuthUser struct {

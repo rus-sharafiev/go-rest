@@ -8,12 +8,13 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
-	"github.com/rus-sharafiev/go-rest/common"
-	"github.com/rus-sharafiev/go-rest/common/auth"
-	"github.com/rus-sharafiev/go-rest/common/db"
-	"github.com/rus-sharafiev/go-rest/common/formdata"
-	"github.com/rus-sharafiev/go-rest/common/spa"
-	"github.com/rus-sharafiev/go-rest/common/uploads"
+	common "github.com/rus-sharafiev/go-rest-common"
+	"github.com/rus-sharafiev/go-rest-common/db"
+	"github.com/rus-sharafiev/go-rest-common/formdata"
+	"github.com/rus-sharafiev/go-rest-common/spa"
+	"github.com/rus-sharafiev/go-rest-common/uploads"
+	"github.com/rus-sharafiev/go-rest/auth"
+	"github.com/rus-sharafiev/go-rest/images"
 	"github.com/rus-sharafiev/go-rest/user"
 )
 
@@ -40,7 +41,7 @@ func main() {
 	// --------------------------------------------------------------------------------
 
 	// Specific pathes
-	// mux.Handle("/images/", images.Controller)
+	mux.Handle("/images/", images.Controller)
 
 	// Static files
 	mux.Handle(*common.Config.UploadPath, uploads.Handler)

@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/rus-sharafiev/go-rest/common/db"
-	"github.com/rus-sharafiev/go-rest/common/exception"
-	"github.com/rus-sharafiev/go-rest/common/localization"
+	"github.com/rus-sharafiev/go-rest-common/db"
+	"github.com/rus-sharafiev/go-rest-common/exception"
+	"github.com/rus-sharafiev/go-rest-common/localization"
 )
 
 type logOut struct {

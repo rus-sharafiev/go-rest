@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/jackc/pgx/v5"
-	"github.com/rus-sharafiev/go-rest/common/db"
-	"github.com/rus-sharafiev/go-rest/common/exception"
-	"github.com/rus-sharafiev/go-rest/common/jwt"
-	"github.com/rus-sharafiev/go-rest/common/localization"
+	"github.com/rus-sharafiev/go-rest-common/db"
+	"github.com/rus-sharafiev/go-rest-common/exception"
+	"github.com/rus-sharafiev/go-rest-common/jwt"
+	"github.com/rus-sharafiev/go-rest-common/localization"
 	"golang.org/x/crypto/pbkdf2"
 )
 

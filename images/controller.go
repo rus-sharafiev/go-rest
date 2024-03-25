@@ -3,15 +3,15 @@ package images
 import (
 	"net/http"
 
-	"github.com/rus-sharafiev/go-rest/common/exception"
+	"github.com/rus-sharafiev/go-rest-common/db"
+	"github.com/rus-sharafiev/go-rest-common/exception"
 )
 
-type Controller struct {
-	UploadDir string
-	SubmitUrl string
+type controller struct {
+	db *db.Postgres
 }
 
-func (c Controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (c controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case http.MethodPost:
@@ -24,3 +24,5 @@ func (c Controller) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		exception.MethodNotAllowed(w)
 	}
 }
+
+var Controller = &controller{db: &db.Instance}
