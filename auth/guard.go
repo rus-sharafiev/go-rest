@@ -15,10 +15,16 @@ func Guard(next http.Handler) http.Handler {
 		r.Header.Del("userID")
 		r.Header.Del("userAccess")
 
-		// Add user headers
+		// Get token
+		var token string
 		if auth := r.Header.Get("Authorization"); len(auth) != 0 {
-			token := strings.Split(auth, " ")[1]
+			token = strings.Split(auth, " ")[1]
+		} else if queryToken := r.URL.Query().Get("token"); len(queryToken) != 0 {
+			token = queryToken
+		}
 
+		// Add user headers
+		if len(token) != 0 {
 			claims, err := jwt.Validate(token)
 			if err == nil {
 				r.Header.Add("userID", strconv.Itoa(claims.UserId))
