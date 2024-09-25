@@ -16,6 +16,7 @@ import (
 	"github.com/rus-sharafiev/go-rest/auth"
 	"github.com/rus-sharafiev/go-rest/images"
 	"github.com/rus-sharafiev/go-rest/user"
+	"github.com/rus-sharafiev/go-rest/ws"
 )
 
 //go:embed config.json
@@ -37,6 +38,7 @@ func main() {
 
 	mux.Handle("/api/auth/", auth.Controller)
 	mux.Handle("/api/users/", user.Controller)
+	mux.Handle("/api/ws", ws.Controller)
 
 	// --------------------------------------------------------------------------------
 
