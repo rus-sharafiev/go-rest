@@ -8,12 +8,12 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
+	"github.com/rus-sharafiev/go-rest-auth/auth"
 	common "github.com/rus-sharafiev/go-rest-common"
 	"github.com/rus-sharafiev/go-rest-common/db"
 	"github.com/rus-sharafiev/go-rest-common/formdata"
 	"github.com/rus-sharafiev/go-rest-common/spa"
 	"github.com/rus-sharafiev/go-rest-common/uploads"
-	"github.com/rus-sharafiev/go-rest/auth"
 	"github.com/rus-sharafiev/go-rest/chat"
 	"github.com/rus-sharafiev/go-rest/images"
 	"github.com/rus-sharafiev/go-rest/user"

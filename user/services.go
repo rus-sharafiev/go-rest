@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/rus-sharafiev/go-rest-auth/auth"
 	common "github.com/rus-sharafiev/go-rest-common"
 	"github.com/rus-sharafiev/go-rest-common/exception"
-	"github.com/rus-sharafiev/go-rest/auth"
 )
 
 // -- CREATE ----------------------------------------------------------------------

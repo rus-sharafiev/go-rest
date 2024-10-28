@@ -10,8 +10,8 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/jackc/pgx/v5"
+	"github.com/rus-sharafiev/go-rest-auth/auth"
 	"github.com/rus-sharafiev/go-rest-common/exception"
-	"github.com/rus-sharafiev/go-rest/auth"
 )
 
 // -- UPGRADE TO WEBSOCKET CONNECTION ---------------------------------------------
