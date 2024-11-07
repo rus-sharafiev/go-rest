@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -30,23 +31,27 @@ func main() {
 		log.Fatalf("\x1b[31mThe config file is missing required fields \x1b[0m\n\n")
 	}
 
+	// use port flag if provided
+	port := flag.String("port", *common.Config.Port, "a port to use")
+	flag.Parse()
+
 	// Connect to the database and create HTTP request multiplexer
 	db.Connect(*common.Config.Db)
 	mux := http.NewServeMux()
 
 	// API ----------------------------------------------------------------------------
 
-	mux.Handle("/api/auth/", auth.Controller)
+	mux.Handle("/api/auth/", auth.Controller.Register("/api/auth"))
 	mux.Handle("/api/users/", user.Controller)
 	mux.Handle("/api/chats/", chat.Controller)
 
 	// --------------------------------------------------------------------------------
 
 	// Specific pathes
-	mux.Handle("/images/", images.Controller)
+	images.Controller.Handler(mux)
 
 	// Static files
-	mux.Handle(*common.Config.UploadPath, uploads.Handler)
+	mux.Handle("/uploads/", uploads.Handler)
 	mux.Handle("/", spa.Handler)
 
 	// Middleware
@@ -59,6 +64,6 @@ func main() {
 		AllowCredentials: true,
 	}).Handler(handler)
 
-	fmt.Printf("\n\x1b[32mServer is running on port %v\x1b[0m\n\n", *common.Config.Port)
-	log.Fatal(http.ListenAndServe(":"+*common.Config.Port, handler))
+	fmt.Printf("\n\x1b[32mServer is running on port %v\x1b[0m\n\n", *port)
+	log.Fatal(http.ListenAndServe(":"+*port, handler))
 }

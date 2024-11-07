@@ -3,14 +3,10 @@ package user
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/rus-sharafiev/go-rest-auth/auth"
-	common "github.com/rus-sharafiev/go-rest-common"
 	"github.com/rus-sharafiev/go-rest-common/exception"
 )
 
@@ -109,14 +105,14 @@ func (c *controller) update(id string, w http.ResponseWriter, r *http.Request) {
 	avatarQuery := "SELECT avatar FROM users WHERE id = $1;"
 	c.db.QueryRow(&avatarQuery, id).Scan(&currentAvatar)
 
-	if currentAvatar.Valid && payload.Avatar != nil && currentAvatar.String != *payload.Avatar {
-		avatarPath := filepath.Join(*common.Config.UploadDir, id, filepath.Base(currentAvatar.String))
-		if err := os.Remove(avatarPath); err != nil {
-			if os.IsNotExist(err) {
-				fmt.Println(err)
-			}
-		}
-	}
+	// if currentAvatar.Valid && payload.Avatar != nil && currentAvatar.String != *payload.Avatar {
+	// 	avatarPath := filepath.Join(*common.Config.UploadDir, id, filepath.Base(currentAvatar.String))
+	// 	if err := os.Remove(avatarPath); err != nil {
+	// 		if os.IsNotExist(err) {
+	// 			fmt.Println(err)
+	// 		}
+	// 	}
+	// }
 
 	query := `
 		WITH u AS (

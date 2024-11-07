@@ -27,3 +27,8 @@ const (
 	ExtraLarge = "2048"
 	Original   = "original"
 )
+
+type Message struct {
+	StatusCode int    `json:"statusCode"`
+	Message    string `json:"message"`
+}
