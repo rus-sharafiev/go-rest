@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"github.com/rs/cors"
-	"github.com/rus-sharafiev/go-rest-auth/auth"
 	common "github.com/rus-sharafiev/go-rest-common"
+	"github.com/rus-sharafiev/go-rest-common/auth"
 	"github.com/rus-sharafiev/go-rest-common/db"
 	"github.com/rus-sharafiev/go-rest-common/formdata"
 	"github.com/rus-sharafiev/go-rest-common/spa"
@@ -41,7 +41,7 @@ func main() {
 
 	// API ----------------------------------------------------------------------------
 
-	mux.Handle("/api/auth/", auth.Controller.Register("/api/auth"))
+	// mux.Handle("/api/auth/", auth.Controller.Register("/api/auth"))
 	mux.Handle("/api/users/", user.Controller)
 	mux.Handle("/api/chats/", chat.Controller)
 
